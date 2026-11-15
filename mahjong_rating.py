@@ -815,12 +815,31 @@ async def submit_game(ctx, game: Game, form_timeout: float | None = None) -> str
 
 
 _http_errors: dict[str, str] = {}  # url -> 最近一次 HTTP 0 的原因, 给日志诊断用
+_ssl_ctx: Any = None
+
+
+def _https_context() -> Any:
+    """安卓上 Python 不认 SSL_CERT_FILE (实测 urllib 会报 unable to get local issuer
+    certificate), 所以有 CA 证书包时直接把文件路径交给 SSLContext. 其他平台用系统默认."""
+    global _ssl_ctx
+    if _ssl_ctx is None:
+        import ssl
+        cands = [os.environ.get("SSL_CERT_FILE", "")]
+        try:
+            cands.append(str(store.app_dir() / "cacert.pem"))
+        except Exception:  # noqa: BLE001
+            pass
+        cafile = next((c for c in cands if c and os.path.isfile(c)), None)
+        _ssl_ctx = ssl.create_default_context(cafile=cafile) if cafile \
+            else ssl.create_default_context()
+    return _ssl_ctx
 
 
 def http_get_json(url: str, timeout: float | None = None) -> tuple[int, Any]:
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json"})
     try:
-        with urllib.request.urlopen(req, timeout=timeout or TIMEOUTS["http"]) as resp:
+        with urllib.request.urlopen(req, timeout=timeout or TIMEOUTS["http"],
+                                    context=_https_context()) as resp:
             body = resp.read().decode("utf-8")
             try:
                 data = json.loads(body)
