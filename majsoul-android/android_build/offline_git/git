@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# 离线垫片: 联网型子命令直接成功返回, 其余交给真正的 git
+case "$1" in
+  fetch|pull|submodule) exit 0 ;;
+esac
+exec /usr/bin/git "$@"

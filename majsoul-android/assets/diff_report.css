@@ -1,0 +1,656 @@
+/* 差异报告样式. 牌面、手牌、副露、表格部分取自 mjai-reviewer templates/report.css */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  max-width: 1240px;
+  margin: auto;
+  padding: 0 12px 40px;
+  background: #f2f2f2;
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  line-height: 1.3;
+  color: #222;
+}
+
+a {
+  color: #1f5fa8;
+}
+
+h1 {
+  font-size: 1.8em;
+  text-align: center;
+  margin: .6em 0 .2em;
+}
+
+.subtitle {
+  text-align: center;
+  color: #555;
+  font-size: 90%;
+}
+
+dl.meta {
+  display: grid;
+  grid-template-columns: max-content auto;
+  gap: 2px 12px;
+}
+
+dl.meta dt {
+  text-align: right;
+  color: #666;
+}
+
+dl.meta dd {
+  margin: 0;
+}
+
+/* ---------------- 牌 (mjai-reviewer 同款) ---------------- */
+
+/* 牌面是 <i class="tile k-1m">, 背景用精灵图 pai-up.svg / pai-side.svg (类和位置由 diff_report.py 生成) */
+.tile {
+  display: inline-block;
+  width: 25px;
+  height: 35px;
+  vertical-align: middle;
+}
+
+.tehai-state {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding-left: 0;
+  margin: .4em 0 .6em;
+}
+
+.tsumo {
+  margin-left: .5em;
+}
+
+.tsumo::before {
+  content: attr(before);
+}
+
+.tsumo::after {
+  content: attr(after);
+}
+
+.fuuro {
+  display: flex;
+  list-style: none;
+  padding-left: 0;
+  margin-left: .5em;
+}
+
+:not(.fuuro)+.fuuro {
+  margin-left: 1em;
+}
+
+.consumed {
+  display: flex;
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.rotated {
+  transform: rotate(-90deg) translateY(35px);
+  transform-origin: bottom left;
+  margin-right: 10px;
+}
+
+.rotated.added {
+  transform: rotate(-90deg) translateY(35px);
+  transform-origin: bottom left;
+  margin-right: -15px;
+}
+
+.role {
+  display: inline-block;
+  font-weight: bold;
+  width: 5em;
+}
+
+.order-loss {
+  color: #e33;
+}
+
+table.data {
+  table-layout: fixed;
+  text-align: center;
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+table.data th,
+table.data td {
+  padding: 2px 4px;
+  border: 1px solid #bbb;
+}
+
+table.data th {
+  font-size: 85%;
+  background: #ddd;
+}
+
+table.data td {
+  font-size: 90%;
+  line-height: 32px;
+}
+
+@media (hover: hover) {
+  table.data tbody tr:hover {
+    background: lightyellow;
+  }
+}
+
+/* 表格放不下时在自己的框里横向滑动 */
+.hscroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+.hscroll>table.data.games {
+  min-width: 560px;
+}
+
+.hscroll>table.data.cands {
+  min-width: 300px;
+}
+
+table.data tr.actual {
+  background: #ffd5d5;
+}
+
+table.data tr.expected {
+  background: #d7f2dc;
+}
+
+table.games td {
+  line-height: 1.6;
+}
+
+/* ---------------- 页面结构 ---------------- */
+
+.toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  padding: 0;
+  list-style: none;
+}
+
+.toc li {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 3px 8px;
+}
+
+.toc .muted,
+.muted {
+  color: #888;
+}
+
+h2.kyoku {
+  border-bottom: 2px solid #999;
+  margin-top: 1.4em;
+  padding-bottom: 4px;
+}
+
+h2.kyoku .end-status {
+  font-size: 65%;
+  font-weight: normal;
+  color: #666;
+  margin-left: 1em;
+}
+
+section.entry {
+  background: #fff;
+  border: 1px solid #c9c9c9;
+  border-left: 5px solid #e66;
+  border-radius: 6px;
+  padding: 8px 12px 10px;
+  margin: 12px 0;
+  /* 屏外的整手不参与排版和绘制, 滚到附近才画. 牌桌本身一直在页面上 */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 640px;
+}
+
+/* 还没展开的一手: 占住大致高度, 滚动条和目录跳转位置才稳 */
+.entry-ph {
+  min-height: 560px;
+  color: #999;
+  padding: 8px 0;
+}
+
+section.entry>h3 {
+  margin: 0 0 8px;
+  font-size: 105%;
+}
+
+section.entry>h3 .info {
+  font-weight: normal;
+  color: #555;
+  margin-left: .8em;
+}
+
+.entry-body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.entry-side {
+  flex: 1 1 420px;
+  min-width: 360px;
+}
+
+.cmp {
+  margin: .3em 0 .6em;
+  line-height: 40px;
+}
+
+.cmp .mine {
+  background: #ffd5d5;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.cmp .ai {
+  background: #d7f2dc;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.cmp .p {
+  color: #666;
+  font-size: 85%;
+  margin-left: .4em;
+}
+
+.cmp .eff-brief {
+  color: #345;
+  font-size: 85%;
+  margin-left: .6em;
+}
+
+/* ---------------- 牌效 (打每张牌后的向听与进张) ---------------- */
+
+.eff {
+  margin: .8em 0;
+}
+
+.eff h4 {
+  margin: .2em 0;
+  font-size: 100%;
+}
+
+.eff p {
+  margin: .2em 0 .4em;
+  line-height: 1.6;
+}
+
+.eff .muted {
+  font-size: 85%;
+}
+
+table.eff-table {
+  table-layout: auto;
+}
+
+table.eff-table td {
+  line-height: 1.3;
+  padding: 3px 4px;
+}
+
+table.eff-table td.num {
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+table.eff-table td.num small {
+  font-weight: normal;
+  color: #666;
+  margin-left: 2px;
+}
+
+table.eff-table td.waits {
+  text-align: left;
+}
+
+table.eff-table td.mark {
+  font-size: 80%;
+  white-space: nowrap;
+  color: #444;
+}
+
+table.eff-table tr.best td.mark {
+  color: #1a6;
+}
+
+.eff .w {
+  display: inline-flex;
+  align-items: center;
+  margin: 1px 6px 1px 0;
+  white-space: nowrap;
+}
+
+.eff .w .tile {
+  width: 20px;
+  height: 28px;
+}
+
+.eff .w b {
+  font-size: 85%;
+  margin-left: 1px;
+}
+
+.eff .w.dead {
+  opacity: .45;
+}
+
+.eff .w.dead b {
+  color: #c00;
+}
+
+.back-sh {
+  color: #c33;
+}
+
+.tg-mark {
+  font-size: 80%;
+  color: #777;
+}
+
+.warn {
+  color: #b35c00;
+  font-size: 90%;
+}
+
+/* ---------------- 牌桌 ---------------- */
+/* 牌桌 600x600, 中心 (300,300). 每家一层, 先按"自家在下"摆好, 再整体旋转 */
+
+.board {
+  position: relative;
+  width: 600px;
+  height: 600px;
+  background: #2f6b4f;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, .35);
+}
+
+/* 外框按可用宽度缩小 (最多 600px), --bs 由页面脚本按外框宽度算出; 牌桌内部始终按 600px 排版 */
+.board-slot {
+  --bs: 1;
+  width: 600px;
+  max-width: 100%;
+  height: calc(600px * var(--bs));
+  flex: none;
+}
+
+.board-slot>.board {
+  transform: scale(var(--bs));
+  transform-origin: 0 0;
+}
+
+.board .tile {
+  width: 22px;
+  height: 31px;
+}
+
+.board .tile.side {
+  width: 31px;
+  height: 22px;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+}
+
+.layer.r1 {
+  transform: rotate(-90deg);
+}
+
+.layer.r2 {
+  transform: rotate(180deg);
+}
+
+.layer.r3 {
+  transform: rotate(90deg);
+}
+
+.river {
+  position: absolute;
+  left: 234px;
+  top: 404px;
+  width: 150px;
+}
+
+.river .row {
+  display: flex;
+  align-items: flex-end;
+  height: 31px;
+}
+
+.rt {
+  display: inline-flex;
+  align-items: flex-end;
+}
+
+.rt.called {
+  opacity: .35;
+}
+
+.rt.hl .tile {
+  outline: 2px solid #ff4d4f;
+  outline-offset: -1px;
+  border-radius: 3px;
+}
+
+/* 牌桌边缘: 左边手牌, 右边副露. 四家的这一行在角上互不重叠 (左右各留 48px) */
+.hand-row {
+  position: absolute;
+  left: 48px;
+  top: 552px;
+  width: 504px;
+  height: 44px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.hand {
+  display: flex;
+  align-items: flex-end;
+}
+
+.hand .drawn {
+  margin-left: 6px;
+  display: inline-flex;
+}
+
+/* 他家手牌: 明牌 / 牌背两份, 按开关切换.
+   body.show-hands 是页面开关; 单张牌桌的 .reveal 在页面开关基础上取反 */
+.hand.opp.open {
+  display: none;
+}
+
+body.show-hands .board:not(.reveal) .hand.opp.open,
+body:not(.show-hands) .board.reveal .hand.opp.open {
+  display: flex;
+}
+
+body.show-hands .board:not(.reveal) .hand.opp.closed,
+body:not(.show-hands) .board.reveal .hand.opp.closed {
+  display: none;
+}
+
+.reveal-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 14px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, .5);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, .25);
+  color: #eef;
+  cursor: pointer;
+}
+
+.reveal-btn:hover,
+.reveal-btn:active {
+  background: rgba(0, 0, 0, .45);
+}
+
+.hand-toggle {
+  display: inline-block;
+  margin: 6px 0 4px;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.melds {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.meld {
+  display: flex;
+  align-items: flex-end;
+}
+
+.meld .stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.seat-label {
+  position: absolute;
+  left: 220px;
+  top: 383px;
+  width: 160px;
+  height: 20px;
+  text-align: center;
+  color: #e9f5ee;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.seat-label.oya .wind {
+  color: #ffd666;
+  font-weight: bold;
+}
+
+.seat-label.self {
+  font-weight: bold;
+}
+
+.seat-label .riichi {
+  color: #fff;
+  background: #c0392b;
+  border-radius: 3px;
+  padding: 0 3px;
+  margin-left: 3px;
+  font-size: 11px;
+}
+
+.center {
+  position: absolute;
+  left: 220px;
+  top: 220px;
+  width: 160px;
+  height: 160px;
+  background: #24543e;
+  border-radius: 8px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 13px;
+}
+
+.center .kyoku-name {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.center .dora {
+  display: flex;
+  gap: 1px;
+}
+
+.center .dora .tile {
+  width: 17px;
+  height: 24px;
+}
+
+/* ---------------- 手机 / 窄窗口 ---------------- */
+
+@media (max-width: 760px) {
+  body {
+    padding: 0 6px 30px;
+  }
+
+  h1 {
+    font-size: 1.4em;
+  }
+
+  section.entry {
+    padding: 6px 6px 8px;
+    border-left-width: 4px;
+    contain-intrinsic-size: auto 900px;
+  }
+
+  .entry-ph {
+    min-height: 840px;
+  }
+
+  .entry-body {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .board-slot {
+    width: 100%;
+  }
+
+  .entry-side {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .tehai-state {
+    font-size: 90%;
+  }
+
+  .tehai-state .tile {
+    width: 21px;
+    height: 29px;
+  }
+
+  .eff .w .tile {
+    width: 17px;
+    height: 24px;
+  }
+
+  .toc li {
+    padding: 5px 8px;
+  }
+}
