@@ -6,57 +6,53 @@
 
 ## 与桌面版的区别
 
-| | 桌面版 | 安卓版 |
-|---|---|---|
-| 界面 | tkinter | PySide6 + QML（入口 `qtapp/`） |
-| 网页访问 | Playwright 经 CDP 控制本机浏览器 | 应用内 QtWebView，`webbackend.py` 驱动页面 |
-| 走势图 | matplotlib 出 PNG | `chart_svg.py` 直接输出 SVG |
-| 差异报告 | 浏览器打开 HTML | `qtapp/qml/diff/` 里的原生阅读器 |
-| 包名 / 版本 | `MajsoulRating-Setup-<版本>.exe` | `org.majsoulrating.majsoulrating`，2.0.0 |
+|             | 桌面版                           | 安卓版                                     |
+| ----------- | -------------------------------- | ------------------------------------------ |
+| 界面        | tkinter                          | PySide6 + QML（入口 `qtapp/`）             |
+| 网页访问    | Playwright 经 CDP 控制本机浏览器 | 应用内 QtWebView，`webbackend.py` 驱动页面 |
+| 走势图      | matplotlib 出 PNG                | `chart_svg.py` 直接输出 SVG                |
+| 差异报告    | 浏览器打开 HTML                  | `qtapp/qml/diff/` 里的原生阅读器           |
+| 包名 / 版本 | `MajsoulRating-Setup-<版本>.exe` | `org.majsoulrating.majsoulrating`，2.0.0   |
 
 ## 截图
 
-| 首页 | 走势图 |
-|---|---|
-| ![首页](docs/screenshots/android-home.png) | ![走势图](docs/screenshots/android-chart.png) |
-
-| 选择对局 | 差异概览 |
-|---|---|
+| 选择对局                                            | 差异概览                                               |
+| --------------------------------------------------- | ------------------------------------------------------ |
 | ![选择对局](docs/screenshots/android-diff-pick.png) | ![差异概览](docs/screenshots/android-diff-summary.png) |
 
-| 差异阅读器 | 目录 |
-|---|---|
+| 差异阅读器                                              | 目录                                           |
+| ------------------------------------------------------- | ---------------------------------------------- |
 | ![差异阅读器](docs/screenshots/android-diff-reader.png) | ![目录](docs/screenshots/android-diff-toc.png) |
 
 ## 借鉴与依赖的项目
 
-| 项目 | 用途 |
-|---|---|
-| [Qt for Python (PySide6)](https://doc.qt.io/qtforpython-6/) 6.12.0 | 界面、QML、QtWebView；用 `pyside6-android-deploy` 打包 |
-| [Buildozer](https://github.com/kivy/buildozer) 1.6.0 / [python-for-android](https://github.com/kivy/python-for-android) | 构建 APK，提供安卓上的 Python 运行时 |
-| [NumPy](https://numpy.org)、[Matplotlib](https://matplotlib.org) | 统计与部分绘图 |
-| [MahjongRepository/mahjong](https://github.com/MahjongRepository/mahjong)（MIT） | 向听数计算 |
-| [amae-koromo](https://github.com/SAPikachu/amae-koromo) | 雀魂牌谱屋，对局与统计数据来源 |
-| [Mortal](https://github.com/Equim-chan/Mortal)、[mjai-reviewer](https://github.com/Equim-chan/mjai-reviewer) | AI 引擎与线上跑谱服务 |
-| [WarL0ckNet/tile-art](https://github.com/WarL0ckNet/tile-art) | 牌面素材，已预渲染成 PNG 精灵图 |
+| 项目                                                                                                                    | 用途                                                   |
+| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| [Qt for Python (PySide6)](https://doc.qt.io/qtforpython-6/) 6.12.0                                                      | 界面、QML、QtWebView；用 `pyside6-android-deploy` 打包 |
+| [Buildozer](https://github.com/kivy/buildozer) 1.6.0 / [python-for-android](https://github.com/kivy/python-for-android) | 构建 APK，提供安卓上的 Python 运行时                   |
+| [NumPy](https://numpy.org)、[Matplotlib](https://matplotlib.org)                                                        | 统计与部分绘图                                         |
+| [MahjongRepository/mahjong](https://github.com/MahjongRepository/mahjong)（MIT）                                        | 向听数计算                                             |
+| [amae-koromo](https://github.com/SAPikachu/amae-koromo)                                                                 | 雀魂牌谱屋，对局与统计数据来源                         |
+| [Mortal](https://github.com/Equim-chan/Mortal)、[mjai-reviewer](https://github.com/Equim-chan/mjai-reviewer)            | AI 引擎与线上跑谱服务                                  |
+| [WarL0ckNet/tile-art](https://github.com/WarL0ckNet/tile-art)                                                           | 牌面素材，已预渲染成 PNG 精灵图                        |
 
 ## 代码模块
 
-| 路径 | 功能 |
-|---|---|
-| `qtapp/main.py`、`qtapp/launch.py` | 安卓入口。构建时 `launch.py` 被复制成包内的 `main.py`，旧入口改名为 `legacy_main.py` |
-| `qtapp/backend.py` | 后端：运行、历史、停止、走势图、差异报告数据 |
-| `qtapp/diff_data.py` | 把 mjai 报告转成结构化数据，供 QML 渲染 |
-| `qtapp/models.py` | 列表模型和差异阅读导航（当前决策点、上一个/下一个、目录） |
-| `qtapp/qml/` | `Main`、`RunPage`、`ReportPage`、`ChartPage`、`LogPage`、`SessionWebPage`、`DiffPickPage`、`DiffSummaryPage`、`DiffReaderPage`、`TocDrawer` |
-| `qtapp/qml/diff/` | 牌桌、副露、动作、牌效的 QML 组件 |
-| `webbackend.py` | 程序内网页提交：注入 `mobile/ama_hook.js` 抓牌谱屋数据，填 mjai 表单，轮询报告 |
-| `mobile/ama_hook.js` | 注入牌谱屋页面的脚本，收集对局请求结果 |
-| `mahjong_rating.py` | 抓取、提交、轮询、统计的核心逻辑，与桌面版共用 |
-| `store.py` | 数据目录与平台判断；`IS_ANDROID` 在这里决定 |
-| `diff_report.py`、`efficiency.py`、`chart_svg.py`、`report_server.py` | 差异数据、向听、SVG 图、本地只读报告服务 |
-| `main.py`、`app_backend.py`、`qml/` | 旧版界面，保留作对比 |
-| `android_build/` | WSL 里构建 APK 的脚本 |
+| 路径                                                                  | 功能                                                                                                                                        |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `qtapp/main.py`、`qtapp/launch.py`                                    | 安卓入口。构建时 `launch.py` 被复制成包内的 `main.py`，旧入口改名为 `legacy_main.py`                                                        |
+| `qtapp/backend.py`                                                    | 后端：运行、历史、停止、走势图、差异报告数据                                                                                                |
+| `qtapp/diff_data.py`                                                  | 把 mjai 报告转成结构化数据，供 QML 渲染                                                                                                     |
+| `qtapp/models.py`                                                     | 列表模型和差异阅读导航（当前决策点、上一个/下一个、目录）                                                                                   |
+| `qtapp/qml/`                                                          | `Main`、`RunPage`、`ReportPage`、`ChartPage`、`LogPage`、`SessionWebPage`、`DiffPickPage`、`DiffSummaryPage`、`DiffReaderPage`、`TocDrawer` |
+| `qtapp/qml/diff/`                                                     | 牌桌、副露、动作、牌效的 QML 组件                                                                                                           |
+| `webbackend.py`                                                       | 程序内网页提交：注入 `mobile/ama_hook.js` 抓牌谱屋数据，填 mjai 表单，轮询报告                                                              |
+| `mobile/ama_hook.js`                                                  | 注入牌谱屋页面的脚本，收集对局请求结果                                                                                                      |
+| `mahjong_rating.py`                                                   | 抓取、提交、轮询、统计的核心逻辑，与桌面版共用                                                                                              |
+| `store.py`                                                            | 数据目录与平台判断；`IS_ANDROID` 在这里决定                                                                                                 |
+| `diff_report.py`、`efficiency.py`、`chart_svg.py`、`report_server.py` | 差异数据、向听、SVG 图、本地只读报告服务                                                                                                    |
+| `main.py`、`app_backend.py`、`qml/`                                   | 旧版界面，保留作对比                                                                                                                        |
+| `android_build/`                                                      | WSL 里构建 APK 的脚本                                                                                                                       |
 
 安卓上 Python 没有系统 CA 证书。`main.py` 的 `_android_ca_bundle()` 把系统根证书合并成 `cacert.pem`，`mahjong_rating._https_context()` 再把它显式交给 `urllib`。
 
@@ -74,16 +70,16 @@ adb install -r MajsoulRating-2.0.0-arm64-v8a-debug.apk
 
 构建在 Windows 上通过 WSL2 的 Ubuntu 22.04 完成。本项目测试用的环境如下。
 
-| 组件 | 版本 / 配置 |
-|---|---|
-| Windows | 10/11，启用 WSL2 |
-| WSL 发行版 | Ubuntu 22.04 |
-| WSL 资源 | 建议 16 核、48 GB 内存、16 GB swap（`%UserProfile%\.wslconfig`），首次构建会明显更快 |
-| Python | WSL 内的虚拟环境 `~/mjr-android/venv` |
-| PySide6 / shiboken6 | 6.12.0 |
-| Buildozer | 1.6.0 |
-| Android SDK / NDK | API 35，NDK 28.2.13676358，`minapi` 与 `ndk_api` 均为 28 |
-| 架构 | `arm64-v8a` |
+| 组件                | 版本 / 配置                                                                          |
+| ------------------- | ------------------------------------------------------------------------------------ |
+| Windows             | 10/11，启用 WSL2                                                                     |
+| WSL 发行版          | Ubuntu 22.04                                                                         |
+| WSL 资源            | 建议 16 核、48 GB 内存、16 GB swap（`%UserProfile%\.wslconfig`），首次构建会明显更快 |
+| Python              | WSL 内的虚拟环境 `~/mjr-android/venv`                                                |
+| PySide6 / shiboken6 | 6.12.0                                                                               |
+| Buildozer           | 1.6.0                                                                                |
+| Android SDK / NDK   | API 35，NDK 28.2.13676358，`minapi` 与 `ndk_api` 均为 28                             |
+| 架构                | `arm64-v8a`                                                                          |
 
 `%UserProfile%\.wslconfig` 示例：
 
@@ -106,6 +102,7 @@ processors=16
    ```
 
    它把源码同步到 `~/mjr-android/build/MjrSpike/`，生成 `buildozer.spec`（`requirements = python3,shiboken6,PySide6,numpy,matplotlib,mahjong`），再调用 `pyside6-android-deploy`。
+
 5. 之后只改了 `.py`、`qml`、`mobile`、`assets` 时，用增量构建，耗时从约 16 分钟降到约 2 分钟：
 
    ```bash
@@ -113,6 +110,7 @@ processors=16
    ```
 
    `QT=1` 表示以 `qtapp` 为入口。脚本里的源码路径取自脚本所在目录的上一级，所以整个目录可以放在任何位置。
+
 6. 产物位于 `~/mjr-android/build/MjrSpike/MajsoulRating-2.0.0-arm64-v8a-debug.apk`。
 
 ### 在模拟器上调试

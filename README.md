@@ -4,16 +4,22 @@
 
 本仓库有两个版本：
 
-| 版本 | 位置 | 说明 |
-|---|---|---|
-| 桌面版（本文） | 仓库根目录 | Windows，tkinter 界面（`gui.py`），Playwright 驱动本机 Edge/Chrome |
-| 安卓版 | [`majsoul-android/`](majsoul-android/README.md) | PySide6 + QML，用程序内 WebView 替代浏览器，打包成 APK |
+| 版本           | 位置                                            | 说明                                                               |
+| -------------- | ----------------------------------------------- | ------------------------------------------------------------------ |
+| 桌面版（本文） | 仓库根目录                                      | Windows，tkinter 界面（`gui.py`），Playwright 驱动本机 Edge/Chrome |
+| 安卓版         | [`majsoul-android/`](majsoul-android/README.md) | PySide6 + QML，用程序内 WebView 替代浏览器，打包成 APK             |
 
 ## 截图
 
+| 主界面UI |
+| ![桌面版主图](docs/screenshots/desktop-mainUI.png) |
+| -------------------------------------------------------- |
 | 主图（Rating 走势、AI 一致率、每局 pt、战绩概览） |
-|---|
+| -------------------------------------------------------- |
 | ![桌面版主图](docs/screenshots/desktop-rating-chart.png) |
+| 决策差异复盘 |
+| ![桌面版主图](docs/screenshots/desktop-analyse.png) |
+| -------------------------------------------------------- |
 
 安卓版的界面截图见 [`majsoul-android/README.md`](majsoul-android/README.md)。
 
@@ -27,36 +33,36 @@
 
 ## 借鉴与依赖的项目
 
-| 项目 | 用途 | 许可 / 说明 |
-|---|---|---|
-| [amae-koromo](https://github.com/SAPikachu/amae-koromo) | 雀魂牌谱屋，提供对局记录与统计数据 | 调用其公开接口 |
-| [Mortal](https://github.com/Equim-chan/Mortal) | 麻将 AI 引擎，生成 Rating 与 AI 一致率 | 模型权重未公开，只能走线上服务 |
-| [mjai-reviewer](https://github.com/Equim-chan/mjai-reviewer) / [mjai.ekyu.moe](https://mjai.ekyu.moe) | 线上跑谱服务与报告格式 | 本项目只提交任务并读取报告 JSON |
-| [MahjongRepository/mahjong](https://github.com/MahjongRepository/mahjong) | 向听数计算（`efficiency.py`） | MIT |
-| [WarL0ckNet/tile-art](https://github.com/WarL0ckNet/tile-art) | 差异报告里的牌面素材（`assets/pai.svg`） | 素材来源见文件头注释 |
-| [Playwright](https://playwright.dev/python/) | 通过 CDP 控制本机浏览器 | Apache-2.0 |
-| [Matplotlib](https://matplotlib.org) | 绘制主图 | |
-| [Pillow](https://python-pillow.org) | 界面里显示图片 | |
-| [PyInstaller](https://pyinstaller.org) | 打包成 exe | 仅构建时需要 |
-| [Inno Setup](https://jrsoftware.org/isinfo.php) | 制作 Windows 安装包 | 仅构建时需要 |
+| 项目                                                                                                  | 用途                                     | 许可 / 说明                     |
+| ----------------------------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------- |
+| [amae-koromo](https://github.com/SAPikachu/amae-koromo)                                               | 雀魂牌谱屋，提供对局记录与统计数据       | 调用其公开接口                  |
+| [Mortal](https://github.com/Equim-chan/Mortal)                                                        | 麻将 AI 引擎，生成 Rating 与 AI 一致率   | 模型权重未公开，只能走线上服务  |
+| [mjai-reviewer](https://github.com/Equim-chan/mjai-reviewer) / [mjai.ekyu.moe](https://mjai.ekyu.moe) | 线上跑谱服务与报告格式                   | 本项目只提交任务并读取报告 JSON |
+| [MahjongRepository/mahjong](https://github.com/MahjongRepository/mahjong)                             | 向听数计算（`efficiency.py`）            | MIT                             |
+| [WarL0ckNet/tile-art](https://github.com/WarL0ckNet/tile-art)                                         | 差异报告里的牌面素材（`assets/pai.svg`） | 素材来源见文件头注释            |
+| [Playwright](https://playwright.dev/python/)                                                          | 通过 CDP 控制本机浏览器                  | Apache-2.0                      |
+| [Matplotlib](https://matplotlib.org)                                                                  | 绘制主图                                 |                                 |
+| [Pillow](https://python-pillow.org)                                                                   | 界面里显示图片                           |                                 |
+| [PyInstaller](https://pyinstaller.org)                                                                | 打包成 exe                               | 仅构建时需要                    |
+| [Inno Setup](https://jrsoftware.org/isinfo.php)                                                       | 制作 Windows 安装包                      | 仅构建时需要                    |
 
 ## 代码模块
 
-| 文件 | 功能 |
-|---|---|
-| `gui.py` | tkinter 图形界面入口（打包版入口，见 `MajsoulRating.spec`） |
-| `mahjong_rating.py` | 主流程：启动浏览器并经 CDP 接入、抓取牌谱屋、提交 mjai、`wait_report` 轮询报告、统计与 matplotlib 绘图、命令行参数 |
-| `store.py` | 本地数据存储（`players/`）、平台判断、资源与数据目录 |
-| `diff_report.py` | 把 mjai 报告渲染成差异报告 HTML；牌面用 PNG 精灵图，按需懒加载 |
-| `efficiency.py` | 每张牌的向听数与有效进张（基于 `mahjong` 库） |
-| `chart_svg.py` | 用 Python 直接输出 SVG 走势图（安卓版用，不依赖 matplotlib） |
-| `report_server.py` | 本地只读 HTTP 服务，向 WebView 提供 `rating_out/` 下的报告 |
-| `main.py` / `app_backend.py` / `qml/` | 旧版 PySide6 + QML 界面（安卓版的前身，也可在桌面运行） |
-| `qtapp/` | Qt 重写版：`backend.py` 后端、`diff_data.py` 差异数据、`models.py` 阅读导航、`qml/` 界面 |
-| `webbackend.py` | 程序内 WebView 版提交流程（安卓用） |
-| `assets/` | 牌面 SVG 与 PNG 精灵图、差异报告样式 |
-| `installer/` | Inno Setup 脚本、图标、简体中文语言包 |
-| `version.py` | 版本号，安装包名从这里读取 |
+| 文件                                  | 功能                                                                                                               |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `gui.py`                              | tkinter 图形界面入口（打包版入口，见 `MajsoulRating.spec`）                                                        |
+| `mahjong_rating.py`                   | 主流程：启动浏览器并经 CDP 接入、抓取牌谱屋、提交 mjai、`wait_report` 轮询报告、统计与 matplotlib 绘图、命令行参数 |
+| `store.py`                            | 本地数据存储（`players/`）、平台判断、资源与数据目录                                                               |
+| `diff_report.py`                      | 把 mjai 报告渲染成差异报告 HTML；牌面用 PNG 精灵图，按需懒加载                                                     |
+| `efficiency.py`                       | 每张牌的向听数与有效进张（基于 `mahjong` 库）                                                                      |
+| `chart_svg.py`                        | 用 Python 直接输出 SVG 走势图（安卓版用，不依赖 matplotlib）                                                       |
+| `report_server.py`                    | 本地只读 HTTP 服务，向 WebView 提供 `rating_out/` 下的报告                                                         |
+| `main.py` / `app_backend.py` / `qml/` | 旧版 PySide6 + QML 界面（安卓版的前身，也可在桌面运行）                                                            |
+| `qtapp/`                              | Qt 重写版：`backend.py` 后端、`diff_data.py` 差异数据、`models.py` 阅读导航、`qml/` 界面                           |
+| `webbackend.py`                       | 程序内 WebView 版提交流程（安卓用）                                                                                |
+| `assets/`                             | 牌面 SVG 与 PNG 精灵图、差异报告样式                                                                               |
+| `installer/`                          | Inno Setup 脚本、图标、简体中文语言包                                                                              |
+| `version.py`                          | 版本号，安装包名从这里读取                                                                                         |
 
 桌面 tkinter 版和 `qtapp/` 版共用 `mahjong_rating.py`、`store.py`、`diff_report.py` 这几个核心模块。
 
@@ -106,28 +112,27 @@ python mahjong_rating.py --name 示例玩家 --games 30 --mode 玉
 python mahjong_rating.py --id 9492350 --games 40 --mode 玉 --mode 玉东
 ```
 
-| 参数 | 说明 |
-|---|---|
-| `--id` / `--name` | 雀魂 UID 或昵称，二选一 |
-| `--games` | 跑最近多少局，默认 20 |
-| `--mode` | 场次类型，可重复。支持：王座 玉 金 王东 玉东 金东 三王座 三玉 三金 三王东 三玉东 三金东 |
-| `--concurrency` | 同时开几个页面提交，默认 3。调到 6 以上多数会卡在人机验证 |
-| `--out` | 输出目录，默认 `rating_out` |
-| `--no-show` | 跑完不弹出图片 |
-| `--data` | 玩家数据目录，默认 `players/` |
-| `--fresh` | 清掉该玩家的跑谱结果和报告后重跑，对局记录保留 |
-| `--timeout-scale` | 网页等待超时的倍数（0.5 到 10，默认 1）。网络慢时调到 2 或 3 |
+| 参数              | 说明                                                                                    |
+| ----------------- | --------------------------------------------------------------------------------------- |
+| `--id` / `--name` | 雀魂 UID 或昵称，二选一                                                                 |
+| `--games`         | 跑最近多少局，默认 20                                                                   |
+| `--mode`          | 场次类型，可重复。支持：王座 玉 金 王东 玉东 金东 三王座 三玉 三金 三王东 三玉东 三金东 |
+| `--concurrency`   | 同时开几个页面提交，默认 3。调到 6 以上多数会卡在人机验证                               |
+| `--out`           | 输出目录，默认 `rating_out`                                                             |
+| `--no-show`       | 跑完不弹出图片                                                                          |
+| `--data`          | 玩家数据目录，默认 `players/`                                                           |
+| `--fresh`         | 清掉该玩家的跑谱结果和报告后重跑，对局记录保留                                          |
+| `--timeout-scale` | 网页等待超时的倍数（0.5 到 10，默认 1）。网络慢时调到 2 或 3                            |
 
 ### 输出
 
-| 文件 | 内容 |
-|---|---|
-| `rating_<UID>.png` | 主图 |
-| `rating_<UID>.csv` | 明细：时间、场次、顺位、点数、段位分变化、Rating、AI 一致率、牌谱链接 |
-| `summary_<UID>.txt` | 战绩概览纯文本 |
-| `diff_<UID>/` | 差异报告 HTML |
-| `players/<UID>/` | 玩家信息、对局记录、mjai 原始报告，用于增量运行 |
-
+| 文件                | 内容                                                                  |
+| ------------------- | --------------------------------------------------------------------- |
+| `rating_<UID>.png`  | 主图                                                                  |
+| `rating_<UID>.csv`  | 明细：时间、场次、顺位、点数、段位分变化、Rating、AI 一致率、牌谱链接 |
+| `summary_<UID>.txt` | 战绩概览纯文本                                                        |
+| `diff_<UID>/`       | 差异报告 HTML                                                         |
+| `players/<UID>/`    | 玩家信息、对局记录、mjai 原始报告，用于增量运行                       |
 
 ## 说明与常见问题
 
